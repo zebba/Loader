@@ -1,0 +1,21 @@
+{
+	"name": "zebba/loader",
+	"type": "component",
+	"description": "Zebba Loader Component",
+	"homepage": "https://github.com/zebba/Loader",
+	"license": "MIT",
+	"authors": [{
+			"name": "Sebastian Kuhlmann",
+			"email": "zebba@hotmail.de"
+		}
+	],
+	"require": {
+		"php": ">=5.3.1"
+	},
+	"autoload": {
+		"psr-0": {
+			"Zebba\\Component\\Loader\\": ""
+		}
+	},
+	"target-dir": "Zebba/Component/Loader"
+}
