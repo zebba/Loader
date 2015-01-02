@@ -46,7 +46,7 @@ class Parser
             
             try {
                 if (count($keys) !== count($values)) {
-                    throw new ParseException(sprintf('The CSV-file is damaged. With %d columns defined in the header %d in the data-row are wrong: %s', count($keys), count($values), $line));
+                    throw new ParseException(sprintf('The CSV-file is damaged. With %d columns defined in the header %d the data is wrong.', count($keys), count($values)));
                 }
 
                 $result[] = array_combine($keys, $values);
