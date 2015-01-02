@@ -45,13 +45,13 @@ class Parser
             $values = str_getcsv($line, $delimiter);
             
             try {
-                if (count($keys) !== count($values)) {
-                    throw new ParseException(sprintf('The CSV-file is damaged. With %d columns defined in the header %d the data is wrong.', count($keys), count($values)));
+                if (is_array($keys) && is_array($values) && count($keys) !== count($values)) {
+                    throw new \DomainException();
                 }
 
                 $result[] = array_combine($keys, $values);
-            } catch (ParseException $e) {
-                throw $e;
+            } catch (\DomainException $e) {
+                throw new ParseException('The CSV-file is damaged.');
             }
         }
 

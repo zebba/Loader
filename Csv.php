@@ -12,6 +12,7 @@ class Csv implements LoaderInterface
     /**
      * @param mixed:string|\SplFileInfo $input
      * @param array $options
+     * @throws ParseException
      * @return array
      */
     public static function parse($input, array $options = array())
@@ -30,6 +31,10 @@ class Csv implements LoaderInterface
         if (false === strpos($input, '\r\n') && is_file($input)) {
             if (false === is_readable($input)) {
                 throw new ParseException(sprintf('Unable to parse \'%s\' as the file is not readable.', $input));
+            }
+
+            if (mime_content_type($input) != 'text/csv') {
+                throw new ParseException('This is not a CSV file.');
             }
 
             $file = $input;
