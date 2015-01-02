@@ -4,10 +4,13 @@ namespace Zebba\Component\Loader;
 
 use Zebba\Component\Loader\Exception\ParseException;
 
+/**
+ * @author Sebastian Kuhlmann <zebba@hotmail.de>
+ */
 class Csv implements LoaderInterface
 {
     /**
-     * @param $input
+     * @param mixed:string|\SplFileInfo $input
      * @param array $options
      * @return array
      */
@@ -22,11 +25,11 @@ class Csv implements LoaderInterface
         $options = array_merge($default_options, $options);
 
         // if input is a file, process it
-        $file = '';
+        $file = null;
 
-        if (false === strpos($input, '\n') && is_file($input)) {
+        if (false === strpos($input, '\r\n') && is_file($input)) {
             if (false === is_readable($input)) {
-                throw new ParseException(sprintf('Unable to parse "%s" as the file is not readable.', $input));
+                throw new ParseException(sprintf('Unable to parse \'%s\' as the file is not readable.', $input));
             }
 
             $file = $input;
@@ -38,23 +41,27 @@ class Csv implements LoaderInterface
         try {
             return $csv->parse($input, $options['delimiter'], $options);
         } catch (ParseException $e) {
-            if ($file) { $e->setParsedFile($file); }
+            if (! is_null($file)) { $e->setParsedFile($file); }
 
             throw $e;
         }
     }
 
     /**
-     * @param $array
+     * @param array $array
      * @param array $options
      * @return string
      */
-    public static function dump($array, array $options = array())
+    public static function dump(array $array, array $options = array())
     {
         $default_options = array(
             'delimiter' => ';',
             'encoding_source' => 'UTF-8',
             'encoding_target' => 'UTF-8',
+        	'header' => true,
+        	'number_format_decimals' => 2,
+        	'number_format_dec_point' => '.',
+        	'number_format_thousands_sep' => '',
         );
 
         $options = array_merge($default_options, $options);

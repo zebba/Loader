@@ -4,6 +4,9 @@ namespace Zebba\Component\Loader\Csv;
 
 use Zebba\Component\Loader\Exception\ParseException;
 
+/**
+ * @author Sebastian Kuhlmann <zebba@hotmail.de>
+ */
 class Parser
 {
     /**
@@ -22,7 +25,11 @@ class Parser
 
         $options = array_merge($default_options, $options);
 
-        $input = iconv($options['encoding_source'], $options['encoding_target'], $input);
+        try {
+        	$input = iconv($options['encoding_source'], $options['encoding_target'], $input);
+        } catch (\Exception $e) {
+        	throw new ParseException('The file might not be a CSV file after all.');
+        }
 
         $lines = preg_split ('/$\R?^/m', $input);
         $lines = array_map('trim', $lines);
@@ -36,7 +43,7 @@ class Parser
 
         foreach ($lines as $line) {
             $values = str_getcsv($line, $delimiter);
-
+            
             try {
                 if (count($keys) !== count($values)) {
                     throw new ParseException(sprintf('The CSV-file is damaged. With %d columns defined in the header %d in the data-row are wrong: %s', count($keys), count($values), $line));
@@ -44,8 +51,6 @@ class Parser
 
                 $result[] = array_combine($keys, $values);
             } catch (ParseException $e) {
-                if (0 == strlen($line)) { continue; }
-
                 throw $e;
             }
         }
