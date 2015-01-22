@@ -51,6 +51,20 @@ class CsvTest extends \PHPUnit_Framework_TestCase
 		
 		Csv::parse($input);
 	}
+
+	public function testParseGermanChars_Iso_8859_1()
+	{
+		$input = new \SplFileInfo(__DIR__ . DIRECTORY_SEPARATOR . 'Fixtures/characters.iso-8859-1.csv');
+
+		$output = array(
+			array('key1' => 'ä', 'key2' => 'Ä'),
+			array('key1' => 'ö', 'key2' => 'Ö'),
+			array('key1' => 'ü', 'key2' => 'Ü'),
+			array('key1' => 'ß', 'key2' => ''),
+		);
+
+		$this->assertEquals($output, Csv::parse($input, array('encoding_source' => 'ISO-8859-1')));
+	}
 }
 
 namespace Zebba\Component\Loader;
