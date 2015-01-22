@@ -33,8 +33,14 @@ class Csv implements LoaderInterface
                 throw new ParseException(sprintf('Unable to parse \'%s\' as the file is not readable.', $input));
             }
 
-            if (mime_content_type($input) != 'text/csv') {
-                throw new ParseException('This is not a CSV file.');
+            if ($input instanceof \SplFileInfo) {
+                if (! in_array(mime_content_type($input->getPathname()), array('text/csv', 'text/plain'))) {
+                    throw new ParseException('This is not a CSV file.');
+                }
+            } else {
+                if (! in_array(mime_content_type($input), array('text/csv', 'text/plain'))) {
+                    throw new ParseException('This is not a CSV file.');
+                }
             }
 
             $file = $input;

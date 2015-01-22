@@ -31,7 +31,12 @@ class Parser
         	throw new ParseException('The file might not be a CSV file after all.');
         }
 
-        $lines = preg_split ('/$\R?^/m', $input);
+        if (preg_split ('/$\R?^/m', $input) > explode("\r\n", $input)) {
+            $lines = preg_split ('/$\R?^/m', $input);
+        } else {
+            $lines = explode("\r\n", $input);
+        }
+
         $lines = array_map('trim', $lines);
 
         $header = trim($lines[0]);
@@ -41,7 +46,9 @@ class Parser
 
         $result = array();
 
-        foreach ($lines as $line) {
+        foreach ($lines as $line_no => $line) {
+            if (0 === strlen($line)) { continue; }
+
             $values = str_getcsv($line, $delimiter);
             
             try {
@@ -51,7 +58,7 @@ class Parser
 
                 $result[] = array_combine($keys, $values);
             } catch (\DomainException $e) {
-                throw new ParseException('The CSV-file is damaged.');
+                throw new ParseException(sprintf('The CSV-file seems to be damaged. Found %d header columns but %d data columns on line %d.', count($keys), count($values), $line_no));
             }
         }
 
